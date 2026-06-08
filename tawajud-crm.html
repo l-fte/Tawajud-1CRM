@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تواجد CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --teal:#1D9E75;--teal-l:#E1F5EE;--teal-d:#085041;--teal-m:#0F6E56;
+  --navy:#042C53;--blue:#185FA5;--blue-l:#E6F1FB;
+  --amber:#BA7517;--amber-l:#FAEEDA;
+  --red:#A32D2D;--red-l:#FCEBEB;
+  --green:#3B6D11;--green-l:#EAF3DE;
+  --gray:#5F5E5A;--gray-l:#F1EFE8;
+  --border:rgba(0,0,0,0.11);--bg:#f5f6f8;--surf:#fff;
+  --txt:#1a1a1a;--muted:#6b6b6b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;min-height:100vh}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:224px;background:var(--navy);color:#fff;display:flex;flex-direction:column;flex-shrink:0}
+.sb-logo{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo h1{font-size:17px;font-weight:700;color:var(--teal)}
+.sb-logo p{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.sb-nav{flex:1;padding:10px 0;overflow-y:auto}
+.nav-i{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;color:rgba(255,255,255,.65);border-right:3px solid transparent;transition:.15s;position:relative}
+.nav-i:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-i.active{background:rgba(29,158,117,.2);color:#fff;border-right-color:var(--teal)}
+.nav-i svg{width:17px;height:17px;flex-shrink:0}
+.nav-badge{position:absolute;left:14px;top:50%;transform:translateY(-50%);background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:9px;padding:1px 6px;min-width:18px;text-align:center;display:none}
+.nav-badge.show{display:block}
+.sb-foot{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-foot p{font-size:11px;color:rgba(255,255,255,.35);margin-bottom:8px}
+.mini-s{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.mini-s span:first-child{color:rgba(255,255,255,.55)}
+.mini-s span:last-child{color:var(--teal);font-weight:600}
+.sb-user{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.5)}
+.sb-user-email{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-logout{cursor:pointer;color:rgba(255,255,255,.4);font-size:18px;line-height:1;padding:2px 6px;border-radius:4px;transition:.15s}
+.sb-logout:hover{color:#fff;background:rgba(255,255,255,.1)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{background:var(--surf);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600}
+.tb-acts{display:flex;gap:8px;align-items:center}
+.content{flex:1;overflow-y:auto;padding:20px}
+
+/* BUTTONS */
+.btn{padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:var(--surf);cursor:pointer;font-size:13px;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:.15s;color:var(--txt);white-space:nowrap}
+.btn:hover{background:var(--gray-l)}
+.btn-primary{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:500}
+.btn-primary:hover{background:var(--teal-m)}
+.btn-danger{background:var(--red-l);color:var(--red);border-color:rgba(163,45,45,.2)}
+.btn-sm{padding:4px 9px;font-size:12px}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--muted);padding:4px 6px}
+.btn-ghost:hover{background:var(--gray-l);color:var(--txt)}
+
+/* SEARCH */
+.srch{position:relative}
+.srch input{padding:7px 10px 7px 34px;width:200px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:var(--bg)}
+.srch svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted)}
+
+/* CARDS & GRID */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:15px}
+.stat-card .lbl{font-size:11px;color:var(--muted);margin-bottom:5px}
+.stat-card .val{font-size:26px;font-weight:700;line-height:1}
+.stat-card .sub{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-card.c-teal .val{color:var(--teal)}
+.stat-card.c-amber .val{color:var(--amber)}
+.stat-card.c-blue .val{color:var(--blue)}
+.stat-card.c-green .val{color:var(--green)}
+.stat-card.c-red .val{color:var(--red)}
+.grid-dash{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:16px}
+
+/* PIPELINE */
+.pipeline{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
+.pipe-col{min-width:210px;flex-shrink:0}
+.pipe-hd{padding:8px 10px;border-radius:7px 7px 0 0;font-size:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.pipe-hd .cnt{background:rgba(255,255,255,.35);border-radius:10px;padding:1px 7px;font-size:11px}
+.pipe-body{background:#eef0f3;border-radius:0 0 7px 7px;padding:8px;min-height:100px;display:flex;flex-direction:column;gap:7px}
+.deal-card{background:#fff;border:1px solid var(--border);border-radius:7px;padding:10px;cursor:pointer;transition:.15s}
+.deal-card:hover{border-color:var(--teal);box-shadow:0 2px 8px rgba(29,158,117,.12)}
+.deal-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.deal-meta{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:4px}
+.deal-followup{font-size:11px;color:var(--teal);margin-top:5px}
+.deal-followup.overdue{color:var(--red)}
+.ph-lead .pipe-hd{background:#6B7280;color:#fff}
+.ph-qual .pipe-hd{background:var(--amber);color:#fff}
+.ph-neg .pipe-hd{background:var(--blue);color:#fff}
+.ph-rtb .pipe-hd{background:var(--green);color:#fff}
+.ph-closed .pipe-hd{background:var(--teal);color:#fff}
+
+/* DISC badges */
+.disc-b{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.disc-D{background:#FEE2E2;color:#991B1B}
+.disc-I{background:#FEF3C7;color:#92400E}
+.disc-S{background:#D1FAE5;color:#065F46}
+.disc-C{background:#DBEAFE;color:#1E40AF}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{padding:8px 10px;text-align:right;color:var(--muted);font-weight:500;font-size:12px;border-bottom:1px solid var(--border);background:var(--gray-l)}
+.tbl td{padding:9px 10px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafafa}
+.tbl tr.clickable{cursor:pointer}
+.stage-b{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;display:inline-block}
+.status-b{padding:3px 9px;border-radius:4px;font-size:11px;font-weight:600;display:inline-block}
+.s-overdue{background:var(--red-l);color:var(--red)}
+.s-today{background:#FEF3C7;color:#92400E}
+.s-soon{background:var(--blue-l);color:var(--blue)}
+.s-upcoming{background:var(--gray-l);color:var(--gray)}
+.s-done{background:var(--green-l);color:var(--green)}
+.prio-high{color:var(--red);font-weight:600}
+.prio-med{color:var(--amber)}
+.prio-low{color:var(--gray)}
+.pdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-left:5px;vertical-align:middle}
+.pdot.high{background:var(--red)}.pdot.med{background:var(--amber)}.pdot.low{background:var(--gray)}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:12px;color:var(--muted);font-weight:500}
+.fg input,.fg select,.fg textarea{padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--txt);background:var(--surf);transition:.15s;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+.fg textarea{resize:vertical;min-height:68px}
+.sec-title{font-size:12px;font-weight:600;color:var(--teal);padding-bottom:8px;border-bottom:2px solid var(--teal-l);margin-bottom:14px;margin-top:20px;letter-spacing:.3px}
+.sec-title:first-child{margin-top:0}
+
+/* DISC / STAGE SELECTORS */
+.disc-sel{display:flex;gap:8px;flex-wrap:wrap}
+.disc-opt{padding:6px 14px;border-radius:7px;border:2px solid var(--border);cursor:pointer;font-size:13px;font-weight:600;transition:.15s;background:var(--bg)}
+.disc-opt[data-d="D"]{color:#991B1B}.disc-opt[data-d="I"]{color:#92400E}.disc-opt[data-d="S"]{color:#065F46}.disc-opt[data-d="C"]{color:#1E40AF}
+.disc-opt.sel[data-d="D"]{background:#FEE2E2;border-color:#991B1B}
+.disc-opt.sel[data-d="I"]{background:#FEF3C7;border-color:#92400E}
+.disc-opt.sel[data-d="S"]{background:#D1FAE5;border-color:#065F46}
+.disc-opt.sel[data-d="C"]{background:#DBEAFE;border-color:#1E40AF}
+.stage-sel{display:flex;gap:6px;flex-wrap:wrap}
+.stage-opt{padding:5px 11px;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:500;transition:.15s;background:var(--bg)}
+.stage-opt.sel{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:9px 15px;font-size:13px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;display:flex;align-items:center;gap:6px}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:500}
+.tab:hover{color:var(--txt)}
+.tab-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:9px;padding:1px 6px;min-width:18px;text-align:center}
+
+/* SCORE BAR */
+.score-bar{background:var(--gray-l);border-radius:4px;height:6px;margin-top:3px}
+.score-fill{height:100%;border-radius:4px;background:var(--teal);transition:width .3s}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto}
+.overlay.open{display:flex}
+.modal{background:var(--surf);border-radius:12px;width:100%;max-width:700px;margin:auto}
+.modal-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surf);z-index:2;border-radius:12px 12px 0 0}
+.modal-hd h2{font-size:15px;font-weight:600}
+.modal-body{padding:20px;max-height:70vh;overflow-y:auto}
+.modal-ft{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+
+/* ACTIVITY */
+.act-feed{display:flex;flex-direction:column;gap:10px}
+.act-item{display:flex;gap:10px;align-items:flex-start}
+.act-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.act-icon.call{background:var(--blue-l)}.act-icon.note{background:var(--amber-l)}.act-icon.deal{background:var(--green-l)}.act-icon.create{background:var(--teal-l)}
+.act-txt{flex:1}
+.act-txt p{font-size:13px;line-height:1.4}
+.act-txt time{font-size:11px;color:var(--muted)}
+
+/* TIP BOXES */
+.tip{border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.55}
+.tip strong{display:block;margin-bottom:3px;font-size:12px}
+
+/* HISTORY ITEM */
+.hist-item{font-size:12px;padding:7px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.hist-item:last-child{border-bottom:none}
+.hist-note{flex:1;color:var(--txt)}
+.hist-time{color:var(--muted);white-space:nowrap;font-size:11px}
+.hist-type{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;background:var(--gray-l);color:var(--gray)}
+
+/* FILTERS ROW */
+.filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.filters select{padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:var(--surf)}
+
+/* AUTH SCREEN */
+#auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,#062f5a 100%);padding:20px}
+.auth-box{background:var(--surf);border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.auth-logo{text-align:center;margin-bottom:30px}
+.auth-logo h1{font-size:24px;color:var(--teal);font-weight:700}
+.auth-logo p{font-size:13px;color:var(--muted);margin-top:4px}
+.auth-tabs{display:flex;margin-bottom:24px;border-bottom:1px solid var(--border)}
+.auth-tab{padding:10px 0;flex:1;text-align:center;cursor:pointer;color:var(--muted);font-size:14px;font-weight:500;border-bottom:2px solid transparent;transition:.15s}
+.auth-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.auth-form{display:flex;flex-direction:column;gap:14px}
+.auth-form .fg label{font-size:13px}
+.auth-form .btn-primary{padding:10px;font-size:14px;justify-content:center}
+.auth-error{background:var(--red-l);color:var(--red);font-size:13px;padding:10px 14px;border-radius:8px;display:none;text-align:center}
+.auth-loading{text-align:center;padding:20px;color:var(--muted);font-size:14px}
+
+/* TOAST */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:12px 18px;border-radius:8px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:slideIn .25s ease;max-width:360px;pointer-events:auto}
+.toast.success{background:var(--green);color:#fff}
+.toast.error{background:var(--red);color:#fff}
+.toast.info{background:var(--blue);color:#fff}
+@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* CONFIRM FOLLOWUP dialog styles */
+.cf-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+
+/* UTIL */
+.hidden{display:none!important}
+.loading-dots::after{content:'';animation:dots 1.2s steps(4) infinite;display:inline-block}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.13);border-radius:4px}
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+
+/* ==================== RESPONSIVE ==================== */
+@media(max-width:900px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;flex-direction:row;flex-wrap:wrap;padding:0;position:sticky;bottom:0;z-index:100;border-top:1px solid rgba(255,255,255,.1)}
+  .sb-logo{display:none}
+  .sb-nav{display:flex;flex:1;overflow-x:auto;padding:0;flex-wrap:nowrap}
+  .nav-i{flex-shrink:0;padding:8px 12px;font-size:11px;border-right:none;border-bottom:2px solid transparent;flex-direction:column;gap:3px;min-width:60px;text-align:center}
+  .nav-i.active{border-right:none;border-bottom-color:var(--teal)}
+  .nav-i svg{width:15px;height:15px}
+  .nav-badge{top:4px;left:50%;transform:translateX(-50%);right:auto;font-size:9px;min-width:15px;padding:0 4px}
+  .sb-foot,.sb-user{display:none}
+  .main{flex:1;overflow:auto}
+  .topbar{padding:0 12px;height:48px;flex-wrap:wrap}
+  .topbar-title{font-size:13px}
+  .srch input{width:140px;font-size:12px}
+  .content{padding:12px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+  .stat-card{padding:10px}
+  .stat-card .val{font-size:20px}
+  .grid-dash{grid-template-columns:1fr;gap:12px}
+  .pipeline{overflow-x:auto}
+  .pipe-col{min-width:180px}
+  .tbl th,.tbl td{padding:6px 5px;font-size:11px}
+  .tbl td:first-child{min-width:80px}
+  .tbl th:nth-child(3),.tbl td:nth-child(3),
+  .tbl th:nth-child(4),.tbl td:nth-child(4),
+  .tbl th:nth-child(5),.tbl td:nth-child(5){display:none}
+  .form-grid{grid-template-columns:1fr;gap:10px}
+  .fg.full{grid-column:1}
+  .modal{max-width:100%;margin:0;border-radius:12px 12px 0 0;margin-top:auto}
+  .overlay{padding:0}
+  .modal-body{max-height:80vh}
+  .sec-title{margin-top:14px}
+  .disc-sel{gap:5px}
+  .disc-opt{padding:5px 10px;font-size:12px}
+  .tabs{overflow-x:auto;flex-wrap:nowrap}
+  .tab{white-space:nowrap;padding:8px 10px;font-size:12px}
+  .filters{overflow-x:auto;flex-wrap:nowrap}
+  .filters select{font-size:12px;padding:5px 8px}
+  .auth-box{padding:24px 20px}
+}
+@media(max-width:500px){
+  .stats-grid{grid-template-columns:1fr 1fr!important}
+  .tb-acts .btn span{display:none}
+  .tb-acts .btn{padding:6px 8px}
+  .tbl th,.tbl td{padding:5px 3px;font-size:10px}
+  .stage-b,.status-b{font-size:9px;padding:2px 5px}
+  .nav-i{min-width:50px;padding:6px 8px;font-size:10px}
+  .tip{font-size:11px;padding:8px}
+}
+</style>
+</head>
+<body>
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <h1>تواجد CRM</h1>
+      <p>منصة المبيعات المتكاملة</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="atab-login" onclick="switchAuthTab('login')">تسجيل الدخول</div>
+      <div class="auth-tab" id="atab-signup" onclick="switchAuthTab('signup')">إنشاء حساب</div>
+    </div>
+    <div class="auth-error" id="auth-error"></div>
+    <div class="auth-form" id="auth-form">
+      <div class="fg" id="auth-name-group" style="display:none"><label>الاسم الكامل *</label><input type="text" id="auth-name" placeholder="أحمد محمد"></div>
+      <div class="fg"><label>البريد الإلكتروني</label><input type="email" id="auth-email" placeholder="name@example.com" dir="ltr"></div>
+      <div class="fg"><label>كلمة المرور</label><input type="password" id="auth-pass" placeholder="••••••••" dir="ltr"></div>
+      <button class="btn btn-primary" id="auth-btn" onclick="authAction()">تسجيل الدخول</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="app-main" style="display:none">
+<div class="sidebar">
+  <div class="sb-logo">
+    <h1>tawajud CRM</h1>
+    <p>منصة المبيعات المتكاملة</p>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-i active" id="nav-dashboard" onclick="go('dashboard')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      لوحة التحكم
+    </div>
+    <div class="nav-i" id="nav-pipeline" onclick="go('pipeline')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path d="M3 5h18M3 10h14M3 15h10M3 20h6"/></svg>
+      خط المبيعات
+    </div>
+    <div class="nav-i" id="nav-leads" onclick="go('leads')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      العملاء
+    </div>
+    <div class="nav-i" id="nav-followups" onclick="go('followups')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      المتابعات
+      <span class="nav-badge" id="nb-followups">0</span>
+    </div>
+    <div class="nav-i" id="nav-add" onclick="go('add')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+      إضافة عميل
+    </div>
+    <div class="nav-i hidden" id="nav-admin" onclick="go('admin')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      لوحة المدير
+    </div>
+  </nav>
+  <div class="sb-foot">
+    <p>إحصائيات الشهر</p>
+    <div class="mini-s"><span>إجمالي العملاء</span><span id="sb-total">0</span></div>
+    <div class="mini-s"><span>صفقات مغلقة</span><span id="sb-closed">0</span></div>
+    <div class="mini-s"><span>معدل التحويل</span><span id="sb-conv">0%</span></div>
+    <div class="mini-s"><span>متابعات متأخرة</span><span id="sb-overdue" style="color:var(--red)">0</span></div>
+  </div>
+  <div class="sb-user">
+    <span class="sb-user-email" id="sb-user-email"></span>
+    <span class="sb-logout" onclick="signOut()" title="تسجيل الخروج">⏻</span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="page-title">لوحة التحكم</span>
+    <div class="tb-acts">
+      <div class="srch">
+        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="بحث..." id="g-search" oninput="onSearch()">
+      </div>
+      <button class="btn btn-primary" onclick="go('add')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        عميل جديد
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card c-teal"><div class="lbl">إجمالي العملاء</div><div class="val" id="d-total">0</div><div class="sub">في قاعدة البيانات</div></div>
+        <div class="stat-card c-amber"><div class="lbl">قيد التفاوض</div><div class="val" id="d-neg">0</div><div class="sub">يحتاجون متابعة</div></div>
+        <div class="stat-card c-red"><div class="lbl">متابعات متأخرة</div><div class="val" id="d-overdue">0</div><div class="sub">تحتاج إجراء فوري</div></div>
+        <div class="stat-card c-green"><div class="lbl">صفقات مغلقة</div><div class="val" id="d-closed">0</div><div class="sub">هذا الشهر</div></div>
+      </div>
+      <div class="grid-dash">
+        <div class="card">
+          <div class="card-hd"><span class="card-title">📅 المتابعات القادمة والمتأخرة</span><button class="btn btn-sm" onclick="go('followups')">عرض الكل</button></div>
+          <table class="tbl"><thead><tr><th>العميل</th><th>المرحلة</th><th>نوع المتابعة</th><th>الموعد</th><th>الحالة</th></tr></thead>
+          <tbody id="dash-fu-body"></tbody></table>
+        </div>
+        <div class="card">
+          <div class="card-hd"><span class="card-title">🕐 آخر النشاطات</span></div>
+          <div class="act-feed" id="act-feed"><div class="empty">لا توجد نشاطات</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title">💡 نصائح DISC سريعة</span></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+          <div class="tip" style="background:#FEE2E2;color:#7f1d1d"><strong>🔴 D — سيطرة</strong>اختصر وركز على النتيجة. لا تطول. اعطه القرار مباشرة.</div>
+          <div class="tip" style="background:#FEF3C7;color:#78350f"><strong>🟡 I — تأثير</strong>شارك قصص نجاح. اعطه Demo. اربط الحل بمشاعره.</div>
+          <div class="tip" style="background:#D1FAE5;color:#064e3b"><strong>🟢 S — ثبات</strong>طمئنه خطوة بخطوة. لا تضغط. اعطه وقت للتفكير.</div>
+          <div class="tip" style="background:#DBEAFE;color:#1e3a8a"><strong>🔵 C — دقة</strong>أعطه أرقام ومقارنات مفصلة. اجب على كل تساؤلاته.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIPELINE -->
+    <div id="sec-pipeline" class="hidden">
+      <div class="pipeline" id="pipe-board"></div>
+    </div>
+
+    <!-- LEADS -->
+    <div id="sec-leads" class="hidden">
+      <div class="filters">
+        <select id="fl-stage" onchange="renderLeads()"><option value="">كل المراحل</option><option value="lead">Lead</option><option value="qualified">Qualified Lead</option><option value="negotiation">تفاوض</option><option value="ready">Ready to Buy</option><option value="closed">مغلق</option></select>
+        <select id="fl-disc" onchange="renderLeads()"><option value="">كل DISC</option><option value="D">D</option><option value="I">I</option><option value="S">S</option><option value="C">C</option></select>
+        <select id="fl-prio" onchange="renderLeads()"><option value="">كل الأولويات</option><option value="high">عالية</option><option value="med">متوسطة</option><option value="low">منخفضة</option></select>
+        <select id="fl-fu" onchange="renderLeads()"><option value="">كل الحالات</option><option value="overdue">متأخرة</option><option value="today">اليوم</option><option value="soon">قريباً</option><option value="none">بدون موعد</option></select>
+        <span id="leads-count" style="font-size:12px;color:var(--muted);margin-right:auto"></span>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="tbl">
+          <thead><tr><th>الاسم / الشركة</th><th>القطاع</th><th>موظفون</th><th>المرحلة</th><th>DISC</th><th>الأولوية</th><th>المتابعة</th><th></th></tr></thead>
+          <tbody id="leads-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FOLLOWUPS -->
+    <div id="sec-followups" class="hidden">
+      <div class="tabs">
+        <div class="tab active" id="tab-all" onclick="setFuTab('all',this)">الكل</div>
+        <div class="tab" id="tab-overdue" onclick="setFuTab('overdue',this)">متأخرة <span class="tab-badge" id="badge-overdue" style="display:none">0</span></div>
+        <div class="tab" id="tab-today" onclick="setFuTab('today',this)">اليوم <span class="tab-badge" id="badge-today" style="display:none">0</span></div>
+        <div class="tab" id="tab-upcoming" onclick="setFuTab('upcoming',this)">قادمة</div>
+        <div class="tab" id="tab-done" onclick="setFuTab('done',this)">منجزة ✓</div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="tbl">
+          <thead><tr><th>العميل</th><th>المرحلة</th><th>نوع المتابعة</th><th>الموعد</th><th>ملاحظات</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody id="fu-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADD/EDIT LEAD -->
+    <div id="sec-add" class="hidden">
+      <div style="max-width:740px">
+        <div class="card">
+          <div class="sec-title">📱 معلومات الاتصال</div>
+          <div class="form-grid">
+            <div class="fg"><label>اسم العميل *</label><input id="f-name" placeholder="م. أحمد محمد"></div>
+            <div class="fg"><label>رقم الهاتف *</label><input id="f-phone" type="tel" placeholder="07XX XXX XXXX"></div>
+            <div class="fg"><label>المنصب الوظيفي</label><input id="f-title" placeholder="مدير عام، مدير HR..."></div>
+            <div class="fg"><label>اسم الشركة / المشروع</label><input id="f-company" placeholder="مطعم النخيل، صيدلية الشفاء..."></div>
+            <div class="fg"><label>القطاع</label>
+              <select id="f-sector"><option value="">اختر القطاع</option><option>مطاعم وكافيهات</option><option>صيدليات</option><option>عيادات طبية</option><option>شركة خدمات</option><option>مراكز تجميل</option><option>وكالات تسويقية</option><option>مكاتب علمية</option><option>شركة تجارية</option><option>تعليم وتدريب</option><option>أخرى</option></select>
+            </div>
+            <div class="fg"><label>عدد الموظفين</label><input id="f-emp" type="number" min="1" placeholder="مثال: 20"></div>
+            <div class="fg"><label>عدد الأفرع</label><input id="f-branches" type="number" min="1" placeholder="1"></div>
+            <div class="fg"><label>النظام الحالي</label>
+              <select id="f-sys"><option value="">اختر</option><option>Excel / يدوي</option><option>نظام آخر</option><option>لا يوجد نظام</option></select>
+            </div>
+          </div>
+
+          <div class="sec-title">🎯 تحليل العميل</div>
+          <div class="form-grid">
+            <div class="fg full"><label>شخصية DISC</label>
+              <div class="disc-sel" id="form-disc">
+                <div class="disc-opt" data-d="D" onclick="pickDisc('D')">D — سيطرة</div>
+                <div class="disc-opt" data-d="I" onclick="pickDisc('I')">I — تأثير</div>
+                <div class="disc-opt" data-d="S" onclick="pickDisc('S')">S — ثبات</div>
+                <div class="disc-opt" data-d="C" onclick="pickDisc('C')">C — دقة</div>
+              </div>
+            </div>
+            <div class="fg full"><label>مرحلة العميل</label>
+              <div class="stage-sel" id="form-stage">
+                <div class="stage-opt" data-s="lead" onclick="pickStage('lead')">Lead</div>
+                <div class="stage-opt" data-s="qualified" onclick="pickStage('qualified')">Qualified Lead</div>
+                <div class="stage-opt" data-s="negotiation" onclick="pickStage('negotiation')">تفاوض</div>
+                <div class="stage-opt" data-s="ready" onclick="pickStage('ready')">Ready to Buy</div>
+                <div class="stage-opt" data-s="closed" onclick="pickStage('closed')">مغلق ✓</div>
+              </div>
+            </div>
+            <div class="fg"><label>صاحب القرار</label>
+              <select id="f-decision"><option value="">غير محدد</option><option>نعم — هو صاحب القرار</option><option>لا — يحتاج موافقة أعلى</option><option>جزئياً</option></select>
+            </div>
+            <div class="fg"><label>أولوية العميل</label>
+              <select id="f-prio"><option value="med">متوسطة</option><option value="high">🔥 عالية</option><option value="low">منخفضة</option></select>
+            </div>
+          </div>
+
+          <div class="sec-title">💊 المشكلة والاحتياج</div>
+          <div class="form-grid">
+            <div class="fg full"><label>المشكلة الرئيسية</label><textarea id="f-pain" placeholder="مثال: أخطاء بالرواتب، حضور يدوي يأخذ وقت، صعوبة متابعة الفروع..."></textarea></div>
+            <div class="fg"><label>مستوى تأثير المشكلة: <span id="f-pain-v" style="color:var(--teal);font-weight:600">5</span>/10</label>
+              <input type="range" id="f-pain-r" min="1" max="10" value="5" step="1" oninput="document.getElementById('f-pain-v').textContent=this.value">
+            </div>
+            <div class="fg"><label>مستوى اقتناع العميل: <span id="f-conv-v" style="color:var(--teal);font-weight:600">5</span>/10</label>
+              <input type="range" id="f-conv-r" min="1" max="10" value="5" step="1" oninput="document.getElementById('f-conv-v').textContent=this.value">
+            </div>
+            <div class="fg"><label>الاعتراض الرئيسي</label>
+              <select id="f-obj"><option value="">لا يوجد اعتراض</option><option>السعر غالي</option><option>ما عدنا وقت الحين</option><option>أفكر وأرجعلك</option><option>ما واثق من النظام</option><option>ليس صاحب القرار</option><option>أخرى</option></select>
+            </div>
+            <div class="fg"><label>طريقة الدفع المفضلة</label>
+              <select id="f-pay"><option value="">غير محدد</option><option>شهري</option><option>سنوي (وفر 20%)</option><option>غير محدد</option></select>
+            </div>
+          </div>
+
+          <div class="sec-title">📅 المتابعة</div>
+          <div class="form-grid">
+            <div class="fg"><label>تاريخ ووقت المتابعة</label><input type="datetime-local" id="f-fudate"></div>
+            <div class="fg"><label>نوع المتابعة</label>
+              <select id="f-futype"><option>اتصال هاتفي</option><option>واتساب</option><option>زيارة ميدانية</option><option>عرض Demo</option><option>إرسال عقد</option></select>
+            </div>
+            <div class="fg full"><label>ملاحظات المكالمة</label><textarea id="f-notes" placeholder="سجل ما تم مناقشته، ما قاله العميل، نقاط مهمة..."></textarea></div>
+          </div>
+
+          <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn" onclick="resetForm()">مسح النموذج</button>
+            <button class="btn btn-primary" id="btn-save-lead" onclick="saveLead()">
+              <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+              <span id="btn-save-text">حفظ العميل</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="sec-admin" class="hidden">
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card c-teal"><div class="lbl">أعضاء الفريق</div><div class="val" id="a-users">0</div><div class="sub">مسجلين حاليًا</div></div>
+        <div class="stat-card c-blue"><div class="lbl">إجمالي العملاء</div><div class="val" id="a-total">0</div><div class="sub">عبر كل الأعضاء</div></div>
+        <div class="stat-card c-green"><div class="lbl">صفقات مغلقة</div><div class="val" id="a-closed">0</div><div class="sub">إجمالي</div></div>
+        <div class="stat-card c-amber"><div class="lbl">متابعات متأخرة</div><div class="val" id="a-overdue">0</div><div class="sub">تحتاج متابعة</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title">📊 أداء الفريق</span></div>
+        <table class="tbl"><thead><tr><th>البريد الإلكتروني</th><th>العملاء</th><th>قيد التفاوض</th><th>صفقات مغلقة</th><th>متابعات نشطة</th><th>التحويل</th></tr></thead>
+          <tbody id="admin-team-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- LEAD DETAIL MODAL -->
+<div class="overlay" id="lead-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <h2 id="m-title">تفاصيل العميل</h2>
+      <button class="btn btn-sm" onclick="closeModal()">✕ إغلاق</button>
+    </div>
+    <div class="modal-body" id="m-body"></div>
+    <div class="modal-ft">
+      <button class="btn btn-danger btn-sm" id="m-del-btn">🗑 حذف العميل</button>
+      <button class="btn btn-sm" onclick="closeModal()">إلغاء</button>
+      <button class="btn btn-primary btn-sm" id="m-save-btn">حفظ التحديثات</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETE FOLLOWUP MODAL -->
+<div class="overlay" id="fu-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-hd"><h2>إنجاز المتابعة</h2><button class="btn btn-sm" onclick="document.getElementById('fu-modal').classList.remove('open')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;margin-bottom:14px;color:var(--muted)">سجل ملاحظة عن هذه المتابعة ثم حدد الموعد القادم:</p>
+      <div class="fg" style="margin-bottom:12px"><label>ملاحظة المتابعة *</label><textarea id="fu-note-inp" rows="3" placeholder="ماذا حدث؟ شنو قال العميل؟"></textarea></div>
+      <div class="cf-row">
+        <div class="fg" style="flex:1"><label>الموعد القادم (اختياري)</label><input type="datetime-local" id="fu-next-date"></div>
+        <div class="fg" style="flex:1"><label>نوع المتابعة القادمة</label>
+          <select id="fu-next-type"><option>اتصال هاتفي</option><option>واتساب</option><option>زيارة ميدانية</option><option>عرض Demo</option><option>إرسال عقد</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-sm" onclick="document.getElementById('fu-modal').classList.remove('open')">إلغاء</button>
+      <button class="btn btn-primary btn-sm" id="fu-confirm-btn">✓ تأكيد الإنجاز</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+console.log('SCRIPT STARTED');
+// ====================================================================
+// CONFIG
+// ====================================================================
+const SUPABASE_URL = 'https://ppnrqazhsahotalszgrm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwbnJxYXpoc2Fob3RhbHN6Z3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MzA5MjcsImV4cCI6MjA5NjQwNjkyN30.fdeb6-WvLfkE_k2o6oCPU49svQxZpPdp9b02rQybKSY';
+
+// ====================================================================
+// SUPABASE INIT
+// ====================================================================
+var supabase;
+try {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true }
+  });
+} catch (e) {
+  console.error('Supabase init failed:', e);
+}
+
+// ====================================================================
+// STATE
+// ====================================================================
+let leads = [];
+let activities = [];
+let fuTab = 'all';
+let formDisc = '';
+let formStage = '';
+let editId = null;
+let fuCompleteId = null;
+let currentUser = null;
+let currentUserProfile = null;
+
+// ====================================================================
+// AUTH
+// ====================================================================
+let authMode = 'login';
+
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('atab-login').classList.toggle('active', mode === 'login');
+  document.getElementById('atab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('auth-btn').textContent = mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب';
+  document.getElementById('auth-name-group').style.display = mode === 'signup' ? 'flex' : 'none';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+async function authAction() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass = document.getElementById('auth-pass').value;
+  const name = document.getElementById('auth-name')?.value.trim() || '';
+  const errEl = document.getElementById('auth-error');
+  errEl.style.cssText = 'display:none';
+  if (!email || !pass) { errEl.textContent = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور'; errEl.style.display = 'block'; return; }
+  if (pass.length < 6) { errEl.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; errEl.style.display = 'block'; return; }
+  if (authMode === 'signup' && !name) { errEl.textContent = 'الرجاء إدخال الاسم الكامل'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('auth-btn');
+  btn.disabled = true; btn.textContent = 'جاري التحميل...';
+  try {
+    if (authMode === 'login') {
+      const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.auth.signUp({ email, password: pass, options: { data: { full_name: name } } });
+      if (error) throw error;
+      errEl.style.cssText = 'display:block;background:var(--green-l);color:var(--green)';
+      errEl.textContent = 'تم إنشاء الحساب! تحقق من بريدك الإلكتروني للتفعيل (إذا كان مطلوباً)';
+      btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+      switchAuthTab('login');
+      return;
+    }
+  } catch (e) {
+    errEl.textContent = e.message || 'حدث خطأ';
+    errEl.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = authMode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب';
+}
+
+async function signOut() {
+  try {
+    await supabase.auth.signOut();
+  } catch (e) {
+    showAuth();
+  }
+}
+
+async function checkSession() {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      await showApp();
+    } else {
+      showAuth();
+    }
+  } catch (e) {
+    showAuth();
+  }
+}
+
+async function showApp() {
+  try {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-main').style.display = 'flex';
+    await loadProfile();
+    await loadAllData();
+    refreshStats();
+    renderActivity();
+    renderDashFu();
+    renderAdminDashboard();
+  } catch (e) {
+    showToast('خطأ: ' + e.message, 'error');
+  }
+}
+
+function showAuth() {
+  currentUser = null;
+  currentUserProfile = null;
+  leads = []; activities = [];
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app-main').style.display = 'none';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+async function loadProfile() {
+  try {
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    if (error) throw error;
+    currentUserProfile = data;
+    const isAdmin = data?.is_admin === true;
+    const displayName = data?.full_name || currentUser.user_metadata?.full_name || currentUser.email;
+    document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
+    document.getElementById('sb-user-email').textContent = displayName + (isAdmin ? ' 👑' : '');
+  } catch (e) {
+    currentUserProfile = null;
+    document.getElementById('sb-user-email').textContent = currentUser.user_metadata?.full_name || currentUser.email;
+  }
+}
+
+if (supabase) {
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      showApp();
+    } else if (event === 'SIGNED_OUT') {
+      showAuth();
+    }
+  });
+}
+
+// ====================================================================
+// DATA LAYER
+// ====================================================================
+async function loadAllData() {
+  const [ldata, adata] = await Promise.all([loadLeads(), loadActivities()]);
+  leads = ldata;
+  activities = adata;
+}
+
+async function loadLeads() {
+  try {
+    const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } catch (e) { showToast('خطأ بتحميل البيانات: ' + e.message, 'error'); return []; }
+}
+
+async function loadActivities() {
+  try {
+    const { data, error } = await supabase.from('activities').select('*').order('created_at', { ascending: false }).limit(30);
+    if (error) throw error;
+    return data || [];
+  } catch (e) { return []; }
+}
+
+async function createLead(leadData) {
+  const { data, error } = await supabase.from('leads').insert({
+    ...leadData,
+    user_id: currentUser.id
+  }).select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function updateLead(id, updates) {
+  const { data, error } = await supabase.from('leads').update(updates).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function removeLead(id) {
+  const { error } = await supabase.from('leads').delete().eq('id', id);
+  if (error) throw error;
+}
+
+async function createActivityRecord(msg, type = 'note') {
+  const { data, error } = await supabase.from('activities').insert({
+    msg, type, user_id: currentUser.id
+  }).select().single();
+  if (error) throw error;
+  return data;
+}
+
+async function removeActivitiesByLead(leadName) {
+  const { error } = await supabase.from('activities').delete().ilike('msg', `%${leadName}%`);
+  if (error) throw error;
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+// ====================================================================
+// NAVIGATION
+// ====================================================================
+const sections = ['dashboard','pipeline','leads','followups','add','admin'];
+const titles = {
+  dashboard:'لوحة التحكم', pipeline:'خط المبيعات', leads:'العملاء المحتملون',
+  followups:'المتابعات', add:'إضافة عميل جديد', admin:'لوحة المدير'
+};
+
+function go(id) {
+  sections.forEach(s => {
+    document.getElementById('sec-'+s).classList.toggle('hidden', s!==id);
+    document.getElementById('nav-'+s).classList.toggle('active', s===id);
+  });
+  document.getElementById('page-title').textContent = titles[id]||id;
+  if (id === 'add') resetForm();
+  if (id === 'pipeline') renderPipeline();
+  if (id === 'leads') renderLeads();
+  if (id === 'followups') renderFollowups();
+  if (id === 'dashboard') { renderDashFu(); renderActivity(); refreshStats(); }
+  if (id === 'admin' && currentUserProfile?.is_admin) renderAdminDashboard();
+}
+
+// ====================================================================
+// STATS
+// ====================================================================
+function refreshStats() {
+  const now = new Date();
+  const total = leads.length;
+  const neg = leads.filter(l=>l.stage==='negotiation').length;
+  const closed = leads.filter(l=>l.stage==='closed').length;
+  const overdue = leads.filter(l=>l.followups && l.followups.some(f=>!f.done && new Date(f.date)<now)).length;
+  const todayFu = leads.filter(l=>l.followups && l.followups.some(f=>{
+    if(f.done) return false;
+    const d=new Date(f.date); const n=new Date();
+    return d.toDateString()===n.toDateString();
+  })).length;
+
+  setText('d-total',total); setText('d-neg',neg); setText('d-overdue',overdue); setText('d-closed',closed);
+  setText('sb-total',total); setText('sb-closed',closed);
+  setText('sb-conv', total ? Math.round(closed/total*100)+'%' : '0%');
+  setText('sb-overdue',overdue);
+
+  const nb = document.getElementById('nb-followups');
+  const urgentCount = overdue + todayFu;
+  nb.textContent = urgentCount;
+  nb.classList.toggle('show', urgentCount>0);
+
+  setBadge('badge-overdue', overdue);
+  setBadge('badge-today', todayFu);
+}
+function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+function setBadge(id,n){const el=document.getElementById(id);if(!el)return;el.textContent=n;el.style.display=n>0?'inline-block':'none';}
+
+// ====================================================================
+// FOLLOWUP HELPERS
+// ====================================================================
+function getLeadActiveFu(lead) {
+  return (lead.followups||[]).filter(f=>!f.done);
+}
+function getLeadNextFu(lead) {
+  const active = getLeadActiveFu(lead);
+  if(!active.length) return null;
+  return active.sort((a,b)=>new Date(a.date)-new Date(b.date))[0];
+}
+function fuStatus(fu) {
+  if(!fu) return null;
+  const now = new Date();
+  const d = new Date(fu.date);
+  const today = now.toDateString() === d.toDateString();
+  if(d < now && !today) return 'overdue';
+  if(today) return 'today';
+  const diff = (d-now)/(1000*60*60*24);
+  if(diff<=3) return 'soon';
+  return 'upcoming';
+}
+function fuStatusLabel(status) {
+  return {overdue:'⚠️ متأخرة',today:'📅 اليوم',soon:'🔔 قريباً',upcoming:'🗓 قادمة',done:'✓ منجزة'}[status]||'—';
+}
+function fuStatusClass(status) {
+  return {overdue:'s-overdue',today:'s-today',soon:'s-soon',upcoming:'s-upcoming',done:'s-done'}[status]||'';
+}
+
+// ====================================================================
+// PIPELINE
+// ====================================================================
+const STAGES = [
+  {key:'lead',label:'Lead',cls:'ph-lead'},
+  {key:'qualified',label:'Qualified Lead',cls:'ph-qual'},
+  {key:'negotiation',label:'تفاوض',cls:'ph-neg'},
+  {key:'ready',label:'Ready to Buy',cls:'ph-rtb'},
+  {key:'closed',label:'مغلق ✓',cls:'ph-closed'},
+];
+const STAGE_LABELS = {lead:'Lead',qualified:'Qualified Lead',negotiation:'تفاوض',ready:'Ready to Buy',closed:'مغلق ✓'};
+const STAGE_COLORS = {lead:'#6B7280',qualified:'#BA7517',negotiation:'#185FA5',ready:'#3B6D11',closed:'#1D9E75'};
+
+function renderPipeline() {
+  const board = document.getElementById('pipe-board');
+  board.innerHTML = STAGES.map(st=>{
+    const sl = leads.filter(l=>l.stage===st.key);
+    const cards = sl.map(l=>{
+      const fu = getLeadNextFu(l);
+      const st2 = fuStatus(fu);
+      const fuHtml = fu ? `<div class="deal-followup ${st2==='overdue'?'overdue':''}">${st2==='overdue'?'⚠️':'📅'} ${fmtDate(fu.date)}</div>` : '';
+      return `<div class="deal-card" onclick="openLead('${l.id}')">
+        <div class="deal-name">${esc(l.name)}</div>
+        <div class="deal-meta">
+          <span>${esc(l.company||l.sector||'—')}</span>
+          ${l.disc?`<span class="disc-b disc-${l.disc}">${l.disc}</span>`:''}
+        </div>
+        ${l.employees?`<div style="font-size:11px;color:var(--muted);margin-top:3px">${l.employees} موظف${l.branches>1?' / '+l.branches+' فروع':''}</div>`:''}
+        ${fuHtml}
+      </div>`;
+    }).join('');
+    return `<div class="pipe-col ${st.cls}">
+      <div class="pipe-hd">${st.label}<span class="cnt">${sl.length}</span></div>
+      <div class="pipe-body">${cards||'<div style="font-size:11px;color:#aaa;text-align:center;padding:14px">فارغ</div>'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ====================================================================
+// LEADS TABLE
+// ====================================================================
+function renderLeads() {
+  const now = new Date();
+  const sf = document.getElementById('fl-stage')?.value||'';
+  const df = document.getElementById('fl-disc')?.value||'';
+  const pf = document.getElementById('fl-prio')?.value||'';
+  const ff = document.getElementById('fl-fu')?.value||'';
+  const q = document.getElementById('g-search')?.value?.toLowerCase()||'';
+
+  let data = leads.filter(l=>{
+    if(sf && l.stage!==sf) return false;
+    if(df && l.disc!==df) return false;
+    if(pf && l.priority!==pf) return false;
+    if(q && !l.name.toLowerCase().includes(q) && !(l.company||'').toLowerCase().includes(q)) return false;
+    if(ff){
+      const fu=getLeadNextFu(l);
+      const st=fuStatus(fu);
+      if(ff==='none' && fu) return false;
+      if(ff==='none' && !fu) return true;
+      if(ff!=='none' && st!==ff) return false;
+    }
+    return true;
+  });
+  document.getElementById('leads-count').textContent = `${data.length} عميل`;
+
+  const body = document.getElementById('leads-body');
+  if(!data.length){body.innerHTML='<tr><td colspan="8"><div class="empty">لا توجد نتائج</div></td></tr>';return;}
+  body.innerHTML = data.map(l=>{
+    const fu=getLeadNextFu(l);
+    const st=fuStatus(fu);
+    const fuCell = fu ? `<span class="status-b ${fuStatusClass(st)}">${fmtDate(fu.date)}</span>` : '<span style="color:var(--muted);font-size:12px">—</span>';
+    return `<tr class="clickable" onclick="openLead('${l.id}')">
+      <td><div style="font-weight:500">${esc(l.name)}</div>${l.company?`<div style="font-size:11px;color:var(--muted)">${esc(l.company)}</div>`:''}</td>
+      <td style="font-size:12px">${esc(l.sector||'—')}</td>
+      <td style="font-size:12px">${l.employees||'—'}</td>
+      <td><span class="stage-b" style="background:${STAGE_COLORS[l.stage]}22;color:${STAGE_COLORS[l.stage]}">${STAGE_LABELS[l.stage]||'—'}</span></td>
+      <td>${l.disc?`<span class="disc-b disc-${l.disc}">${l.disc}</span>`:'—'}</td>
+      <td><span class="pdot ${l.priority}"></span>${l.priority==='high'?'عالية':l.priority==='low'?'منخفضة':'متوسطة'}</td>
+      <td>${fuCell}</td>
+      <td><button class="btn btn-sm" onclick="event.stopPropagation();openLead('${l.id}')">فتح</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ====================================================================
+// FOLLOWUPS TABLE
+// ====================================================================
+function setFuTab(t,el){
+  fuTab=t;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  renderFollowups();
+}
+
+function renderFollowups() {
+  const now = new Date();
+  const body = document.getElementById('fu-body');
+  let rows = [];
+
+  if(fuTab==='done') {
+    leads.forEach(l=>{
+      (l.followups||[]).filter(f=>f.done).forEach(f=>{
+        rows.push({lead:l, fu:f, status:'done'});
+      });
+    });
+    rows.sort((a,b)=>new Date(b.fu.doneAt||b.fu.date)-new Date(a.fu.doneAt||a.fu.date));
+  } else {
+    leads.forEach(l=>{
+      getLeadActiveFu(l).forEach(f=>{
+        const st=fuStatus(f);
+        if(fuTab==='all') rows.push({lead:l,fu:f,status:st});
+        else if(fuTab===st) rows.push({lead:l,fu:f,status:st});
+      });
+    });
+    rows.sort((a,b)=>new Date(a.fu.date)-new Date(b.fu.date));
+  }
+
+  if(!rows.length){body.innerHTML='<tr><td colspan="7"><div class="empty">لا توجد متابعات في هذه الفئة</div></td></tr>';return;}
+  body.innerHTML = rows.map(({lead:l,fu,status})=>{
+    const label = fuStatusLabel(status);
+    const cls = fuStatusClass(status);
+    const actionBtn = status==='done'
+      ? `<span style="font-size:11px;color:var(--green)">✓ منجزة</span>`
+      : `<button class="btn btn-sm" style="color:var(--teal)" onclick="event.stopPropagation();openFuComplete('${l.id}','${fu.id}')">✓ إنجاز</button>`;
+    return `<tr class="clickable" onclick="openLead('${l.id}')">
+      <td><div style="font-weight:500">${esc(l.name)}</div>${l.company?`<div style="font-size:11px;color:var(--muted)">${esc(l.company)}</div>`:''}</td>
+      <td><span class="stage-b" style="background:${STAGE_COLORS[l.stage]}22;color:${STAGE_COLORS[l.stage]};font-size:11px">${STAGE_LABELS[l.stage]||'—'}</span></td>
+      <td style="font-size:12px">${esc(fu.type||'اتصال')}</td>
+      <td style="font-size:12px">${status==='done'?(fu.doneAt?fmtDatetime(fu.doneAt):fmtDatetime(fu.date)):fmtDatetime(fu.date)}</td>
+      <td style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(fu.note||fu.doneNote||'—')}</td>
+      <td><span class="status-b ${cls}">${label}</span></td>
+      <td>${actionBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ====================================================================
+// COMPLETE FOLLOWUP
+// ====================================================================
+function openFuComplete(leadId, fuId) {
+  fuCompleteId = {leadId, fuId};
+  document.getElementById('fu-note-inp').value='';
+  document.getElementById('fu-next-date').value='';
+  document.getElementById('fu-modal').classList.add('open');
+  document.getElementById('fu-confirm-btn').onclick = confirmFuComplete;
+}
+async function confirmFuComplete() {
+  if(!fuCompleteId) return;
+  const note = document.getElementById('fu-note-inp').value.trim();
+  if(!note){showToast('الرجاء كتابة ملاحظة عن المتابعة','error');return;}
+  const {leadId, fuId} = fuCompleteId;
+  const lead = leads.find(l=>l.id===leadId);
+  if(!lead) return;
+  const fups = lead.followups || [];
+  const fu = fups.find(f=>f.id===fuId);
+  if(!fu) return;
+  fu.done = true;
+  fu.doneAt = new Date().toISOString();
+  fu.doneNote = note;
+  lead.history = lead.history||[];
+  lead.history.push({date:new Date().toISOString(), note:`متابعة منجزة (${fu.type||'اتصال'}): ${note}`, type:'call'});
+  const nextDate = document.getElementById('fu-next-date').value;
+  const nextType = document.getElementById('fu-next-type').value;
+  if(nextDate) {
+    fups.push({id:uid(), date:nextDate, type:nextType, note:'', done:false});
+    lead.history.push({date:new Date().toISOString(), note:`تم جدولة متابعة جديدة: ${nextType} — ${fmtDatetime(nextDate)}`, type:'note'});
+  }
+  try {
+    await updateLead(lead.id, { followups: fups, history: lead.history });
+    const act = await createActivityRecord(`متابعة منجزة: ${lead.name}`, 'call');
+    activities.unshift(act);
+    showToast('تم إنجاز المتابعة ✓','success');
+  } catch(e) { showToast('خطأ بحفظ المتابعة: '+e.message,'error'); }
+  document.getElementById('fu-modal').classList.remove('open');
+  fuCompleteId=null;
+  refreshStats();
+  renderFollowups();
+  renderDashFu();
+  renderPipeline();
+}
+
+// ====================================================================
+// DASHBOARD FOLLOWUPS
+// ====================================================================
+function renderDashFu() {
+  const now = new Date();
+  let rows = [];
+  leads.forEach(l=>{
+    getLeadActiveFu(l).forEach(f=>{
+      const st=fuStatus(f);
+      if(st==='overdue'||st==='today'||st==='soon') rows.push({lead:l,fu:f,status:st});
+    });
+  });
+  rows.sort((a,b)=>new Date(a.fu.date)-new Date(b.fu.date));
+  const body = document.getElementById('dash-fu-body');
+  if(!rows.length){body.innerHTML='<tr><td colspan="5"><div class="empty" style="padding:20px">لا توجد متابعات عاجلة 🎉</div></td></tr>';return;}
+  body.innerHTML = rows.slice(0,8).map(({lead:l,fu,status})=>`
+    <tr class="clickable" onclick="openLead('${l.id}')">
+      <td><div style="font-weight:500;font-size:13px">${esc(l.name)}</div></td>
+      <td><span class="stage-b" style="background:${STAGE_COLORS[l.stage]}22;color:${STAGE_COLORS[l.stage]};font-size:11px">${STAGE_LABELS[l.stage]||'—'}</span></td>
+      <td style="font-size:12px">${esc(fu.type||'اتصال')}</td>
+      <td style="font-size:12px">${fmtDatetime(fu.date)}</td>
+      <td><span class="status-b ${fuStatusClass(status)}">${fuStatusLabel(status)}</span></td>
+    </tr>`).join('');
+}
+
+// ====================================================================
+// ACTIVITY
+// ====================================================================
+function renderActivity() {
+  const icons = {call:'📞',note:'📝',deal:'🎉',create:'✨'};
+  const feed = document.getElementById('act-feed');
+  if(!activities.length){feed.innerHTML='<div class="empty">لا توجد نشاطات</div>';return;}
+  feed.innerHTML = activities.slice(0,10).map(a=>`
+    <div class="act-item">
+      <div class="act-icon ${a.type}">${icons[a.type]||'📌'}</div>
+      <div class="act-txt"><p>${esc(a.msg)}</p><time>${fmtDatetime(a.created_at)}</time></div>
+    </div>`).join('');
+}
+
+async function renderAdminDashboard() {
+  if (!currentUserProfile?.is_admin) return;
+  try {
+    const { data: profiles, error } = await supabase.from('profiles').select('*').order('created_at');
+    if (error) throw error;
+    const users = profiles || [];
+    document.getElementById('a-users').textContent = users.length;
+    document.getElementById('a-total').textContent = leads.length;
+    const now = new Date();
+    const totalClosed = leads.filter(l=>l.stage==='closed').length;
+    const totalOverdue = leads.filter(l=>l.followups?.some(f=>!f.done && new Date(f.date)<now)).length;
+    document.getElementById('a-closed').textContent = totalClosed;
+    document.getElementById('a-overdue').textContent = totalOverdue;
+    const body = document.getElementById('admin-team-body');
+    body.innerHTML = users.map(u => {
+      const ul = leads.filter(l => l.user_id === u.id);
+      const neg = ul.filter(l=>l.stage==='negotiation').length;
+      const closed = ul.filter(l=>l.stage==='closed').length;
+      const actFu = ul.filter(l=>l.followups?.some(f=>!f.done)).length;
+      const conv = ul.length ? Math.round(closed/ul.length*100) : 0;
+      return `<tr>
+        <td>${esc(u.email||'—')}${u.is_admin?' 👑':''}</td>
+        <td>${ul.length}</td>
+        <td>${neg}</td>
+        <td>${closed}</td>
+        <td>${actFu}</td>
+        <td><span class="status-b ${conv>=50?'s-done':conv>=20?'s-today':'s-upcoming'}">${conv}%</span></td>
+      </tr>`;
+    }).join('');
+  } catch (e) { /* admin dashboard silently fails */ }
+}
+
+// ====================================================================
+// FORM
+// ====================================================================
+function pickDisc(d) {
+  formDisc=d;
+  document.querySelectorAll('#form-disc .disc-opt').forEach(el=>el.classList.toggle('sel',el.dataset.d===d));
+}
+function pickStage(s) {
+  formStage=s;
+  document.querySelectorAll('#form-stage .stage-opt').forEach(el=>el.classList.toggle('sel',el.dataset.s===s));
+}
+function resetForm() {
+  ['f-name','f-phone','f-title','f-company','f-emp','f-branches','f-notes','f-fudate'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['f-sector','f-sys','f-decision','f-obj','f-pay','f-futype'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.selectedIndex=0;
+  });
+  document.getElementById('f-prio').value='med';
+  document.getElementById('f-pain-r').value=5; document.getElementById('f-pain-v').textContent='5';
+  document.getElementById('f-conv-r').value=5; document.getElementById('f-conv-v').textContent='5';
+  document.getElementById('f-pain').value='';
+  formDisc=''; formStage='';
+  document.querySelectorAll('#form-disc .disc-opt, #form-stage .stage-opt').forEach(el=>el.classList.remove('sel'));
+  editId = null;
+  document.getElementById('btn-save-text').textContent = 'حفظ العميل';
+}
+
+async function saveLead() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  if(!name){showToast('الاسم مطلوب','error');return;}
+  if(!phone){showToast('رقم الهاتف مطلوب','error');return;}
+  if (!/^[\d\s\+\-\(\)]{7,20}$/.test(phone)) { showToast('رقم الهاتف غير صالح','error'); return; }
+
+  const btn = document.getElementById('btn-save-lead');
+  btn.disabled = true;
+  document.getElementById('btn-save-text').textContent = 'جاري الحفظ...';
+
+  const fudate = document.getElementById('f-fudate').value;
+  const futype = document.getElementById('f-futype').value;
+  const notes = document.getElementById('f-notes').value.trim();
+
+  const leadData = {
+    name, phone,
+    title: document.getElementById('f-title').value.trim(),
+    company: document.getElementById('f-company').value.trim(),
+    sector: document.getElementById('f-sector').value,
+    employees: document.getElementById('f-emp').value ? parseInt(document.getElementById('f-emp').value) : null,
+    branches: document.getElementById('f-branches').value ? parseInt(document.getElementById('f-branches').value) : 1,
+    current_sys: document.getElementById('f-sys').value,
+    disc: formDisc,
+    stage: formStage||'lead',
+    decision: document.getElementById('f-decision').value,
+    priority: document.getElementById('f-prio').value,
+    pain: document.getElementById('f-pain').value.trim(),
+    pain_level: +document.getElementById('f-pain-r').value,
+    conviction: +document.getElementById('f-conv-r').value,
+    objection: document.getElementById('f-obj').value,
+    pay_pref: document.getElementById('f-pay').value,
+    followups: fudate ? [{id:uid(), date:fudate, type:futype, note:'', done:false}] : [],
+    history: [{date:new Date().toISOString(), note:'تم إنشاء العميل'+(notes?'. ملاحظة: '+notes:''), type:'create'}],
+    notes,
+  };
+
+  try {
+    if (editId) {
+      // UPDATE existing lead
+      const updated = await updateLead(editId, leadData);
+      const idx = leads.findIndex(l=>l.id===editId);
+      if(idx>-1) leads[idx] = updated;
+      showToast('تم تحديث العميل ✓','success');
+      editId = null;
+    } else {
+      // CREATE new lead
+      const created = await createLead(leadData);
+      leads.unshift(created);
+      const act = await createActivityRecord(`عميل جديد: ${name}`, 'create');
+      activities.unshift(act);
+      showToast('تم حفظ العميل ✓','success');
+    }
+  } catch(e) {
+    showToast('خطأ: '+e.message,'error');
+    btn.disabled = false;
+    document.getElementById('btn-save-text').textContent = editId ? 'تحديث العميل' : 'حفظ العميل';
+    return;
+  }
+
+  btn.disabled = false;
+  document.getElementById('btn-save-text').textContent = 'حفظ العميل';
+  refreshStats();
+  resetForm();
+  go('leads');
+}
+
+// ====================================================================
+// LEAD MODAL
+// ====================================================================
+const DISC_TIPS = {
+  D:'اختصر وركز على النتيجة. الفائدة الأساسية أولاً. أسرع طريقة. لا تطول.',
+  I:'شارك قصص نجاح. استخدم العواطف. اعطه Demo. الفريق راح يرتاح من الشغل اليدوي.',
+  S:'طمئنه خطوة بخطوة. التفعيل بسيط جداً. فريقنا يرافقكم. لا تضغط عليه.',
+  C:'أعطه أرقام مقارنة. اجب على كل تساؤلاته. مقارنة بالنظام الحالي. ROI واضح.',
+};
+const OBJ_TIPS = {
+  'السعر غالي':'اسأل: مقارنة بشنو تحديداً؟ شكد خسركم الخطأ الواحد بالرواتب؟ إذا وفر ساعات عمل وتقارير جاهزة يبقى السعر غالي؟',
+  'ما عدنا وقت الحين':'التفعيل مصمم يكون بسيط جداً. شكد وقت يضيع شهرياً بالمتابعة اليدوية؟ إذا بقت نفس الطريقة 6 أشهر شراح يصير؟',
+  'أفكر وأرجعلك':'تحتاج معلومات أكثر لو وقت أكثر؟ إذا نعطي القرار من 10 شكد نسبة اقتناعك؟ شنو أكثر نقطة مخليتك متردد؟',
+  'ما واثق من النظام':'عندنا تجربة مجانية 14 يوم ودعم كامل. أغلب الشركات كان عدها نفس التخوف. تحب تشوف تجربة شركة مشابهة؟',
+  'ليس صاحب القرار':'من نقدر نتحدث معه لإكمال النقاش؟ هل يمكن نعمل اجتماع مشترك؟',
+};
+
+async function openLead(id) {
+  editId = id;
+  const l = leads.find(x=>x.id===id);
+  if(!l) return;
+  document.getElementById('m-title').textContent = l.name + (l.company?' — '+l.company:'');
+
+  const fu = getLeadNextFu(l);
+  const fuSt = fuStatus(fu);
+
+  const histHtml = (l.history||[]).slice().reverse().map(h=>`
+    <div class="hist-item">
+      <div class="hist-note">${esc(h.note)}</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="hist-type">${h.type==='call'?'📞':h.type==='note'?'📝':h.type==='deal'?'🎉':'✨'}</span>
+        <span class="hist-time">${fmtDatetime(h.date)}</span>
+      </div>
+    </div>`).join('') || '<div style="font-size:12px;color:var(--muted)">لا يوجد سجل</div>';
+
+  const fuListHtml = (l.followups||[]).length ? `
+    <div style="margin-bottom:4px">
+      ${(l.followups||[]).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(f=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+          <span class="status-b ${fuStatusClass(f.done?'done':fuStatus(f))}" style="font-size:10px">${f.done?'✓ منجزة':fuStatusLabel(fuStatus(f))}</span>
+          <span style="flex:1">${esc(f.type||'اتصال')} — ${fmtDatetime(f.date)}</span>
+          ${f.done
+            ? `<span style="color:var(--muted)">${esc(f.doneNote||'')}</span>`
+            : `<button class="btn btn-sm" style="color:var(--teal);padding:2px 8px;font-size:11px" onclick="event.stopPropagation();openFuComplete('${l.id}','${f.id}')">✓ إنجاز</button>
+               <button class="btn btn-sm" style="color:var(--red);padding:2px 8px;font-size:11px" onclick="event.stopPropagation();deleteFollowup('${l.id}','${f.id}')">✕</button>`
+          }
+        </div>`).join('')}
+    </div>` : '<div style="font-size:12px;color:var(--muted)">لا توجد متابعات</div>';
+
+  document.getElementById('m-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><span style="font-size:11px;color:var(--muted)">الهاتف</span><div style="font-size:14px;font-weight:500"><input id="m-phone" value="${esc(l.phone||'')}" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:13px"></div></div>
+      <div><span style="font-size:11px;color:var(--muted)">المنصب</span><div style="font-size:13px"><input id="m-job" value="${esc(l.title||'')}" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:13px"></div></div>
+      <div><span style="font-size:11px;color:var(--muted)">اسم الشركة</span><div style="font-size:13px"><input id="m-company" value="${esc(l.company||'')}" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:13px"></div></div>
+      <div><span style="font-size:11px;color:var(--muted)">القطاع</span><div style="font-size:13px">
+        <select id="m-sector" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:13px">
+          <option value="">اختر</option>
+          ${['مطاعم وكافيهات','صيدليات','عيادات طبية','شركة خدمات','مراكز تجميل','وكالات تسويقية','مكاتب علمية','شركة تجارية','تعليم وتدريب','أخرى'].map(s=>`<option ${l.sector===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div></div>
+      <div><span style="font-size:11px;color:var(--muted)">الموظفون / الأفرع</span><div style="font-size:13px;display:flex;gap:6px"><input id="m-employees" type="number" value="${l.employees||''}" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:13px" placeholder="موظفون"> <input id="m-branches" type="number" value="${l.branches||1}" style="width:70px;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:13px" placeholder="فروع"></div></div>
+      <div><span style="font-size:11px;color:var(--muted)">صاحب القرار</span><div style="font-size:13px">
+        <select id="m-decision" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:13px">
+          <option value="">غير محدد</option><option ${l.decision==='نعم'?'selected':''}>نعم — هو صاحب القرار</option><option ${l.decision==='لا'?'selected':''}>لا — يحتاج موافقة أعلى</option><option ${l.decision==='جزئياً'?'selected':''}>جزئياً</option>
+        </select>
+      </div></div>
+    </div>
+
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <span class="stage-b" style="background:${STAGE_COLORS[l.stage]}22;color:${STAGE_COLORS[l.stage]}">${STAGE_LABELS[l.stage]||'—'}</span>
+      ${l.disc?`<span class="disc-b disc-${l.disc}" style="padding:3px 10px">${l.disc} — ${{D:'سيطرة',I:'تأثير',S:'ثبات',C:'دقة'}[l.disc]}</span>`:''}
+      <span class="stage-b" style="background:var(--gray-l);color:var(--gray)">${l.priority==='high'?'🔥 أولوية عالية':l.priority==='low'?'أولوية منخفضة':'أولوية متوسطة'}</span>
+    </div>
+
+    ${l.disc&&DISC_TIPS[l.disc]?`<div class="tip" style="background:var(--blue-l);color:#0C447C;margin-bottom:10px"><strong>💡 نصيحة DISC (${l.disc}):</strong>${esc(DISC_TIPS[l.disc])}</div>`:''}
+    ${l.objection&&OBJ_TIPS[l.objection]?`<div class="tip" style="background:var(--amber-l);color:#633806;margin-bottom:10px"><strong>⚡ رد على اعتراض "${esc(l.objection)}":</strong> ${esc(OBJ_TIPS[l.objection])}</div>`:''}
+
+    ${l.pain?`<div style="margin-bottom:12px"><div style="font-size:11px;color:var(--muted);margin-bottom:3px">المشكلة الرئيسية</div><div style="background:var(--gray-l);padding:8px;border-radius:6px;font-size:13px">${esc(l.pain)}</div></div>`:''}
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">تأثير المشكلة: ${l.painLevel||0}/10</div>
+        <div class="score-bar"><div class="score-fill" style="width:${(l.painLevel||0)*10}%"></div></div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px">مستوى الاقتناع: ${l.conviction||0}/10</div>
+        <div class="score-bar"><div class="score-fill" style="width:${(l.conviction||0)*10}%;background:${(l.conviction||0)>=7?'var(--green)':(l.conviction||0)>=4?'var(--amber)':'var(--red)'}"></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:8px">تحديث المرحلة</div>
+      <div class="stage-sel" id="m-stage-sel">
+        ${STAGES.map(s=>`<div class="stage-opt ${l.stage===s.key?'sel':''}" data-s="${s.key}" onclick="mPickStage('${s.key}')">${s.label}</div>`).join('')}
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:8px">تحديث معلومات العميل</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="fg"><label>DISC</label>
+          <div class="disc-sel" id="m-disc-sel">
+            ${['D','I','S','C'].map(d=>`<div class="disc-opt ${l.disc===d?'sel':''}" data-d="${d}" onclick="mPickDisc('${d}')">${d}</div>`).join('')}
+          </div>
+        </div>
+        <div class="fg"><label>مستوى الاقتناع: <span id="m-conv-v">${l.conviction||5}</span>/10</label>
+          <input type="range" id="m-conv-r" min="1" max="10" step="1" value="${l.conviction||5}" oninput="document.getElementById('m-conv-v').textContent=this.value">
+        </div>
+        <div class="fg"><label>الاعتراض</label>
+          <select id="m-obj-sel">
+            ${['','السعر غالي','ما عدنا وقت الحين','أفكر وأرجعلك','ما واثق من النظام','ليس صاحب القرار','أخرى'].map(o=>`<option ${l.objection===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg"><label>الأولوية</label>
+          <select id="m-prio-sel">
+            <option value="high" ${l.priority==='high'?'selected':''}>🔥 عالية</option>
+            <option value="med" ${l.priority==='med'?'selected':''}>متوسطة</option>
+            <option value="low" ${l.priority==='low'?'selected':''}>منخفضة</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:8px">جدولة متابعة جديدة</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="fg"><label>التاريخ والوقت</label><input type="datetime-local" id="m-fu-date"></div>
+        <div class="fg"><label>النوع</label>
+          <select id="m-fu-type"><option>اتصال هاتفي</option><option>واتساب</option><option>زيارة ميدانية</option><option>عرض Demo</option><option>إرسال عقد</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px">ملاحظة جديدة</div>
+      <textarea id="m-note-inp" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;resize:vertical;min-height:65px" placeholder="سجل ما حدث بالمكالمة أو الاجتماع..."></textarea>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:8px">📋 قائمة المتابعات</div>
+      ${fuListHtml}
+    </div>
+
+    <div>
+      <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px">🕐 سجل النشاط</div>
+      ${histHtml}
+    </div>
+  `;
+  document.getElementById('m-save-btn').onclick = ()=>saveLeadUpdates(id);
+  document.getElementById('m-del-btn').onclick = ()=>deleteLead(id);
+  document.getElementById('lead-modal').classList.add('open');
+}
+
+function mPickDisc(d) {
+  document.querySelectorAll('#m-disc-sel .disc-opt').forEach(el=>el.classList.toggle('sel',el.dataset.d===d));
+}
+function mPickStage(s) {
+  document.querySelectorAll('#m-stage-sel .stage-opt').forEach(el=>el.classList.toggle('sel',el.dataset.s===s));
+}
+async function saveLeadUpdates(id) {
+  try {
+    const l = leads.find(x=>x.id===id);
+    if(!l) return;
+
+    const newPhone = document.getElementById('m-phone')?.value?.trim() || l.phone || '';
+    const newTitle = document.getElementById('m-job')?.value?.trim() || '';
+    const newCompany = document.getElementById('m-company')?.value?.trim() || '';
+    const newSector = document.getElementById('m-sector')?.value || l.sector;
+    const newEmployees = document.getElementById('m-employees')?.value ? parseInt(document.getElementById('m-employees').value) : null;
+    const newBranches = document.getElementById('m-branches')?.value ? parseInt(document.getElementById('m-branches').value) : 1;
+    const newDecision = document.getElementById('m-decision')?.value || '';
+
+    const stSel = document.querySelector('#m-stage-sel .stage-opt.sel');
+    const discSel = document.querySelector('#m-disc-sel .disc-opt.sel');
+    const newStage = stSel ? stSel.dataset.s : l.stage;
+    const newDisc = discSel ? discSel.dataset.d : l.disc;
+
+    const newConviction = +document.getElementById('m-conv-r').value;
+    const newObj = document.getElementById('m-obj-sel').value;
+    const newPrio = document.getElementById('m-prio-sel').value;
+
+    // Track changes before applying
+    const stageChanged = newStage !== l.stage;
+    const discChanged = newDisc !== l.disc;
+    const oldStage = l.stage;
+
+    l.history = l.history || [];
+    if (stageChanged) {
+      l.history.push({date:new Date().toISOString(), note:`تم تغيير المرحلة من "${STAGE_LABELS[oldStage]}" إلى "${STAGE_LABELS[newStage]}"`, type:'deal'});
+    }
+    if (discChanged) {
+      l.history.push({date:new Date().toISOString(), note:`تم تغيير DISC من ${l.disc||'—'} إلى ${newDisc}`, type:'note'});
+    }
+
+    // Apply updates
+    l.phone = newPhone;
+    l.title = newTitle;
+    l.company = newCompany;
+    l.sector = newSector;
+    l.employees = newEmployees;
+    l.branches = newBranches;
+    l.decision = newDecision;
+    l.stage = newStage;
+    l.disc = newDisc;
+    l.conviction = newConviction;
+    l.objection = newObj;
+    l.priority = newPrio;
+
+    // New followup
+    const newFuDate = document.getElementById('m-fu-date').value;
+    const newFuType = document.getElementById('m-fu-type').value;
+    if(newFuDate) {
+      l.followups = l.followups || [];
+      l.followups.push({id:uid(), date:newFuDate, type:newFuType, note:'', done:false});
+      l.history.push({date:new Date().toISOString(), note:`جدولة متابعة: ${newFuType} — ${fmtDatetime(newFuDate)}`, type:'note'});
+    }
+
+    // New note
+    const newNote = document.getElementById('m-note-inp').value.trim();
+    if(newNote) {
+      l.history.push({date:new Date().toISOString(), note:newNote, type:'note'});
+    }
+
+    try {
+      const updated = await updateLead(l.id, {
+        phone: l.phone, title: l.title, company: l.company, sector: l.sector,
+        employees: l.employees, branches: l.branches, decision: l.decision,
+        stage: l.stage, disc: l.disc, conviction: l.conviction, objection: l.objection,
+        priority: l.priority, followups: l.followups, history: l.history
+      });
+      Object.assign(l, updated);
+      if (newNote) {
+        const act = await createActivityRecord(`ملاحظة على ${l.name}: ${newNote.slice(0,40)}`, 'note');
+        activities.unshift(act);
+      }
+      if (stageChanged) {
+        const act = await createActivityRecord(`${l.name}: تحول إلى ${STAGE_LABELS[newStage]}`, 'deal');
+        activities.unshift(act);
+      }
+      showToast('تم حفظ التحديثات ✓','success');
+    } catch(e) {
+      showToast('خطأ بحفظ التحديثات: '+e.message,'error');
+      return;
+    }
+
+    refreshStats();
+    renderDashFu();
+    closeModal();
+    if(!document.getElementById('sec-pipeline').classList.contains('hidden')) renderPipeline();
+    if(!document.getElementById('sec-leads').classList.contains('hidden')) renderLeads();
+    if(!document.getElementById('sec-followups').classList.contains('hidden')) renderFollowups();
+  } catch(e) {
+    showToast('خطأ: '+e.message,'error');
+  }
+}
+
+async function deleteFollowup(leadId, fuId) {
+  if(!confirm('هل أنت متأكد من حذف هذه المتابعة؟')) return;
+  const l = leads.find(x=>x.id===leadId);
+  if(!l) return;
+  l.followups = (l.followups||[]).filter(f=>f.id!==fuId);
+  try {
+    await updateLead(l.id, { followups: l.followups });
+    showToast('تم حذف المتابعة','success');
+    openLead(leadId);
+  } catch(e) {
+    showToast('خطأ بحذف المتابعة','error');
+  }
+}
+
+async function deleteLead(id) {
+  if(!confirm('هل أنت متأكد من حذف هذا العميل؟')) return;
+  const l = leads.find(x=>x.id===id);
+  const name = l?.name || '';
+  try {
+    await removeLead(id);
+    leads = leads.filter(l=>l.id!==id);
+    activities = activities.filter(a => !a.msg.includes(name));
+    showToast('تم حذف العميل','success');
+  } catch(e) {
+    showToast('خطأ بالحذف: '+e.message,'error');
+  }
+  closeModal();
+  refreshStats();
+  if(!document.getElementById('sec-pipeline').classList.contains('hidden')) renderPipeline();
+  if(!document.getElementById('sec-leads').classList.contains('hidden')) renderLeads();
+  if(!document.getElementById('sec-followups').classList.contains('hidden')) renderFollowups();
+}
+
+function closeModal() {
+  document.getElementById('lead-modal').classList.remove('open');
+  editId=null;
+}
+
+// ====================================================================
+// SEARCH
+// ====================================================================
+function onSearch(){
+  if(!document.getElementById('sec-leads').classList.contains('hidden')) renderLeads();
+}
+
+// ====================================================================
+// TOAST
+// ====================================================================
+function showToast(msg, type='info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3500);
+}
+
+// ====================================================================
+// UTILS
+// ====================================================================
+function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(s){
+  if(!s) return '—';
+  return new Date(s).toLocaleDateString('ar-IQ',{day:'numeric',month:'short',year:'numeric'});
+}
+function fmtDatetime(s){
+  if(!s) return '—';
+  try {
+    return new Date(s).toLocaleString('ar-IQ',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:true});
+  } catch(e){ return s; }
+}
+
+// ====================================================================
+// EXPORT GLOBALS for inline onclick handlers
+// ====================================================================
+window.switchAuthTab = switchAuthTab;
+window.authAction = authAction;
+window.signOut = signOut;
+window.go = go;
+window.renderLeads = renderLeads;
+window.renderFollowups = renderFollowups;
+window.setFuTab = setFuTab;
+window.openFuComplete = openFuComplete;
+window.pickDisc = pickDisc;
+window.pickStage = pickStage;
+window.saveLead = saveLead;
+window.openLead = openLead;
+window.mPickDisc = mPickDisc;
+window.mPickStage = mPickStage;
+window.deleteFollowup = deleteFollowup;
+window.deleteLead = deleteLead;
+window.closeModal = closeModal;
+window.onSearch = onSearch;
+window.resetForm = resetForm;
+window.confirmFuComplete = confirmFuComplete;
+
+// ====================================================================
+// INIT
+// ====================================================================
+checkSession();
+</script>
+</body>
+</html>
