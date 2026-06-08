@@ -194,7 +194,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 .filters select{padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:var(--surf)}
 
 /* AUTH SCREEN */
-#auth-screen{display:none;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,#062f5a 100%);padding:20px}
+#auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,#062f5a 100%);padding:20px}
 .auth-box{background:var(--surf);border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .auth-logo{text-align:center;margin-bottom:30px}
 .auth-logo h1{font-size:24px;color:var(--teal);font-weight:700}
@@ -280,6 +280,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:va
 </style>
 </head>
 <body>
+<script>window.switchAuthTab=function(){};window.authAction=function(){};</script>
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="auth-box">
